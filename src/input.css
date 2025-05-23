@@ -1,9 +1,17 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 body {
+  display: flex;
+  flex-direction: column;
   font-family: 'Inter', sans-serif;
   background-color: #0C0A09;
+  min-width: screen;
+}
+
+@layer utilities {
+  .card {
+    @apply w-50 h-30 flex items-center justify-center rounded-xl bg-[#1c1917]
+           hover:bg-[#292524] transition-colors duration-200 cursor-pointer;
+  }
 }
