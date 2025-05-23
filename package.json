@@ -1,0 +1,24 @@
+{
+  "name": "desafio-catalogo-filmes",
+  "version": "1.0.0",
+  "description": "Aplicação web desenvolvida como parte do processo seletivo de estágio front-end da empresa CEVICOM.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felipethecreator/desafio-catalogo-filmes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/felipethecreator/desafio-catalogo-filmes/issues"
+  },
+  "homepage": "https://github.com/felipethecreator/desafio-catalogo-filmes#readme",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "tailwindcss": "^4.1.7"
+  }
+}
