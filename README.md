@@ -49,6 +49,7 @@ cd desafio-catalogo-filmes
 npm install
 ```
 ### 3. Inicie o Tailwind em modo watch
+⚠️ **Atenção**: se você não rodar esse comando, o layout não será aplicado corretamente!
 Gera o CSS final automaticamente a partir do input.css:
 ```terminal
 npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch
