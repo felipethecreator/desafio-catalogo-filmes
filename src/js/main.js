@@ -3,28 +3,49 @@ const movieInput = document.getElementById("movie-input");
 const btnSearchMovie = document.getElementById("search-movie-submit");
 const pagination = document.getElementById("pagination");
 const toggleBtn = document.querySelector("#toggle-theme");
-const themeIcon = toggleBtn.querySelector("img");
+const themeIcon = document.getElementById("theme-icon");
 const dialogSelectedMovie = document.getElementById("selected-movie");
 let currentPage = 1;
 let lastSearch = "";
 
 // DEFINIÇÃO DO LIGHT/DARK MODE
+const savedTheme = localStorage.getItem('theme') || 'dark';
 
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'dark') {
-    document.documentElement.classList.add('dark');
-    themeIcon.src = 'assets/moon-light.png'
-} else {
-    document.documentElement.classList.remove('dark');
-    themeIcon.src = 'assets/moon.png'
+function applyTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.classList.add('light');
+        document.body.classList.add('light');
+        themeIcon.src = 'assets/moon-light.png';
+        themeIcon.alt = 'Switch to dark mode';
+    } else {
+        document.documentElement.classList.remove('light');
+        document.body.classList.remove('light');
+        themeIcon.src = 'assets/moon.png';
+        themeIcon.alt = 'Switch to light mode';
+    }
 }
 
+// Apply saved theme on load
+applyTheme(savedTheme);
+
 toggleBtn.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    themeIcon.src = isDark ? 'assets/moon-light.png' : 'assets/moon.png';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    const isLight = document.documentElement.classList.contains('light');
+    const newTheme = isLight ? 'dark' : 'light';
+    applyTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
 });
+
+// Function to open modal with blur effect
+function openModal() {
+    dialogSelectedMovie.classList.remove("hidden");
+    document.body.classList.add("modal-open");
+}
+
+// Function to close modal and remove blur effect
+function closeModal() {
+    dialogSelectedMovie.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+}
 
 //CONEXAO A API DO OMDB!!!
 const API_KEY = "410ea29c";
@@ -38,12 +59,16 @@ btnSearchMovie.addEventListener('click', () => {
 
 async function fetchResults(term, page) {
     try {
-        moviesGrid.innerHTML = "<p class='text-white'>Carregando...</p>";
+        const isLight = document.documentElement.classList.contains('light');
+        const loadingTextClass = isLight ? 'text-black' : 'text-white';
+        moviesGrid.innerHTML = `<p class='${loadingTextClass}'>Carregando...</p>`;
+        
         const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(term)}&page=${page}`);
         const data = await res.json();
 
         if (data.Response === "False") {
-            moviesGrid.innerHTML = `<p class='text-[#c4c4c4]'>Nenhum resultado encontrado para "${enteredValue}".</p>`;
+            const errorTextClass = isLight ? 'text-gray-600' : 'text-[#c4c4c4]';
+            moviesGrid.innerHTML = `<p class='${errorTextClass}'>Nenhum resultado encontrado para "${term}".</p>`;
             return;
         }
 
@@ -56,7 +81,9 @@ async function fetchResults(term, page) {
 
     } catch (error) {
         console.error("Erro ao buscar filmes:", error);
-        moviesGrid.innerHTML = `<p class='text-[#c4c4c4]'>Erro ao buscar filmes. Tente novamente.</p>`;
+        const isLight = document.documentElement.classList.contains('light');
+        const errorTextClass = isLight ? 'text-gray-600' : 'text-[#c4c4c4]';
+        moviesGrid.innerHTML = `<p class='${errorTextClass}'>Erro ao buscar filmes. Tente novamente.</p>`;
     }
 };
 
@@ -67,23 +94,35 @@ async function fetchMovieDetails(id) {
         return data;
     } catch (error) {
         console.error("Erro ao buscar filme selecionado:", error);
-        moviesGrid.innerHTML = `<p class='text-[#c4c4c4]'>Erro ao buscar filme selecionado. Tente novamente.</p>`;
+        const isLight = document.documentElement.classList.contains('light');
+        const errorTextClass = isLight ? 'text-gray-600' : 'text-[#c4c4c4]';
+        moviesGrid.innerHTML = `<p class='${errorTextClass}'>Erro ao buscar filme selecionado. Tente novamente.</p>`;
     }
 }
 
 function renderResults(movies) {
     moviesGrid.innerHTML = "";
+    const isLight = document.documentElement.classList.contains('light');
+    
     movies.forEach((movie) => {
         const card = document.createElement("button");
-        card.className = "bg-[#1c1917] text-white p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer";
+        
+        // Theme-aware card styling
+        const cardClasses = isLight 
+            ? "movie-card bg-white border border-gray-200 shadow-md text-black p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all duration-200"
+            : "movie-card bg-[#1c1917] text-white p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer hover:bg-[#292524] transition-all duration-200";
+        
+        card.className = cardClasses;
 
         const poster = movie.Poster;
+        const titleClass = isLight ? 'text-black' : 'text-white';
+        const metaClass = isLight ? 'text-gray-600' : 'text-[#c4c4c4]';
 
         card.innerHTML = `
-      <img src="${poster}" alt="${movie.Title}" class="w-full h-[300px] object-fit rounded">
-      <h3 class="text-lg font-bold text-center">${movie.Title}</h3>
-      <p class="text-sm text-[#c4c4c4]">${movie.Year} • ${movie.Type}</p>
-    `;
+            <img src="${poster}" alt="${movie.Title}" class="w-full h-[300px] object-cover rounded">
+            <h3 class="text-lg font-bold text-center ${titleClass}">${movie.Title}</h3>
+            <p class="text-sm ${metaClass}">${movie.Year} • ${movie.Type}</p>
+        `;
 
         moviesGrid.appendChild(card);
 
@@ -91,67 +130,82 @@ function renderResults(movies) {
             const selectedMovie = movie.imdbID;
             const data = await fetchMovieDetails(selectedMovie);
 
-            dialogSelectedMovie.classList.remove("hidden");
+            openModal();
+            
+            // Theme-aware modal styling
+            const modalBg = isLight ? 'bg-white' : 'bg-[#1c1917]';
+            const modalText = isLight ? 'text-black' : 'text-white';
+            const modalBorder = isLight ? 'border border-gray-200 shadow-xl' : 'border border-[#27272a]';
+            
             dialogSelectedMovie.innerHTML = `
-  <div class="bg-[#1c1917] text-white p-6 rounded-xl shadow-xl max-w-lg w-full">
-    <img src="${data.Poster}" alt="${data.Title}" class="rounded max-h-[400px] object-cover mx-auto mb-4">
-    <h2 class="text-2xl font-bold mb-2">${data.Title}</h2>
-    <p class="mb-1"><strong>Ano:</strong> ${data.Year}</p>
-    <p class="mb-1"><strong>Duração:</strong> ${data.Runtime}</p>
-    <p class="mb-1"><strong>Lançamento:</strong> ${data.Released}</p>
-    <p class="mb-1"><strong>Classificação:</strong> ${data.Rated}</p>
-    <p class="mb-4"><strong>Sinopse:</strong> ${data.Plot}</p>
-    <button id="close-modal" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded self-end block ml-auto">
-      Fechar
-    </button>
-  </div>
-`;
-            dialogSelectedMovie.addEventListener("click", e => {
-                if (e.target === dialogSelectedMovie) {
-                    dialogSelectedMovie.classList.add("hidden")
-                }
-            })
+                <div class="modal-content ${modalBg} ${modalText} ${modalBorder} p-6 rounded-xl max-w-lg w-full mx-auto my-auto max-h-[90vh] overflow-y-auto">
+                    <img src="${data.Poster}" alt="${data.Title}" class="rounded h-full w-full object-cover mx-auto mb-4">
+                    <h2 class="text-2xl font-bold mb-2">${data.Title}</h2>
+                    <p class="mb-1"><strong>Ano:</strong> ${data.Year}</p>
+                    <p class="mb-1"><strong>Duração:</strong> ${data.Runtime}</p>
+                    <p class="mb-1"><strong>Lançamento:</strong> ${data.Released}</p>
+                    <p class="mb-1"><strong>Classificação:</strong> ${data.Rated}</p>
+                    <p class="mb-4"><strong>Sinopse:</strong> ${data.Plot}</p>
+                    <p class="mb-1"><strong>Gênero:</strong> ${data.Genre}</p>
+                    <p class="mb-1"><strong>Atores:</strong> ${data.Actors}</p>
+                    <p class="mb-1"><strong>Direção:</strong> ${data.Director}</p>
 
+                    <button id="close-modal" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">
+                        Fechar
+                    </button>
+                </div>
+            `;
+
+            // Close modal when clicking outside
+            dialogSelectedMovie.addEventListener("click", (e) => {
+                if (e.target === dialogSelectedMovie) {
+                    closeModal();
+                }
+            });
+
+            // Close modal when clicking the close button
             document.getElementById("close-modal").addEventListener("click", () => {
-                dialogSelectedMovie.classList.add("hidden");
+                closeModal();
             });
         });
-    })
-
+    });
 }
 
 function initPagination(total) {
     const totalPages = Math.ceil(total / 10);
 
     pagination.innerHTML = `
-    <button id="previous-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Anterior</button>
-    <span class="bg-[#ff1d1d] w-fit p-3 gap-2 h-[50px] rounded-md flex items-center justify-center !text-white font-medium">Página ${currentPage} de ${totalPages}</span>
-    <button id="next-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Próxima</button>
-  `;
+        <button id="previous-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Anterior</button>
+        <span class="bg-[#ff1d1d] w-fit p-3 gap-2 h-[50px] rounded-md flex items-center justify-center !text-white font-medium">Página ${currentPage} de ${totalPages}</span>
+        <button id="next-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Próxima</button>
+    `;
 
     const previousPage = document.getElementById("previous-page");
     const nextPage = document.getElementById("next-page");
 
     if (currentPage === 1) {
-        previousPage.remove();
+        previousPage.style.display = "none";
     }
 
     if (currentPage === totalPages) {
-        nextPage.remove();
+        nextPage.style.display = "none";
     }
 
-    previousPage.addEventListener("click", () => {
+    if (previousPage) {
+        previousPage.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchResults(lastSearch, currentPage);
+            }
+        });
+    }
 
-        if (currentPage > 1) {
-            currentPage--;
-            fetchResults(lastSearch, currentPage);
-        }
-    });
-
-    nextPage.addEventListener("click", () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            fetchResults(lastSearch, currentPage);
-        }
-    });
+    if (nextPage) {
+        nextPage.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                fetchResults(lastSearch, currentPage);
+            }
+        });
+    }
 }

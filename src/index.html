@@ -9,18 +9,18 @@
     <title>MovieFlix</title>
 </head>
 
-<body class="bg-[#0C0A09]">
+<body class="bg-[#0C0A09] text-white transition-colors duration-300">
     <header class="h-30 flex items-center justify-between p-16">
         <h1 class="text-3xl md:text-4xl font-bold text-[#ff1d1d]">MovieFlix</h1>
         <button id="toggle-theme" class="w-10 border border-[#27272a] rounded-md p-2 hover:bg-[#292524] transition-colors duration-200 cursor-pointer">
-            <img src="" alt="Dark mode" class="w-full">
+            <img id="theme-icon" src="assets/moon.png" alt="Toggle theme" class="w-full">
         </button>
     </header>
 
     <main class="flex-1">
         <section class="h-auto flex justify-center p-6">
             <input id="movie-input" type="text" placeholder="Procure por filmes, séries, episódios..."
-                class="text-[#f2f2f2] border-[0.5px] border-[#27272a] rounded-l-md cursor-pointer w-[60%] h-[50px] p-6">
+                class="bg-[#1c1917] text-[#f2f2f2] border-[0.5px] border-[#27272a] rounded-l-md cursor-pointer w-[60%] h-[50px] p-6 transition-colors duration-300">
             <button id="search-movie-submit" class="bg-[#ff1d1d] w-28 gap-0.5 h-[50px] rounded-r-lg flex items-center pl-2 text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">
                 <img src="assets/lupa.png" alt="Lupa" class="h-5 w-5 mr-2">
                 Procurar
@@ -30,13 +30,14 @@
         <section class="text-center flex justify-center flex-col">
             <h2 class="text-3xl font-bold mb-4 text-white">Bem vindo ao MovieFlix</h2>
             <span class="text-xl mb-6 text-[#c4c4c4]">Procure seus filmes favoritos, programas de TV e muito mais</span>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto text-lg text-white">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto text-lg">
                 <button class="card">Ação</button>
                 <button class="card">Comédia</button>
                 <button class="card">Drama</button>
                 <button class="card">Ficção Científica</button>
             </div>
-            <dialog id="selected-movie" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"></dialog>
+            <div id="selected-movie" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            </div>
         </section>
 
         <section id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto p-6"></section>

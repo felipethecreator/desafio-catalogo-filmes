@@ -5,11 +5,19 @@ body {
   display: flex;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
-  min-width: screen;
+  min-height: 100vh;
 }
 
-#selected-movie::backdrop {
-  background-color: rgba(0, 0, 0, 0.7);
+#selected-movie {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#selected-movie.hidden {
+  display: none !important;
 }
 
 @layer utilities {
@@ -18,27 +26,63 @@ body {
            hover:bg-[#292524] transition-colors duration-200 cursor-pointer text-white;
   }
 
-  .dark body {
+  .light body {
     @apply bg-white text-black;
   }
 
-  .dark .card {
-    @apply bg-gray-300 text-black hover:bg-gray-400;
+  .light .card {
+    @apply bg-gray-200 text-black hover:bg-gray-300;
   }
 
-  .dark input {
-    @apply bg-white text-black border-gray-400;
+  .light input {
+    @apply bg-white text-black border-gray-300;
   }
 
-  .dark footer {
-    @apply text-black
+  .light footer {
+    @apply text-gray-600;
   }
   
-  .dark span {
-    @apply text-black
+  .light span {
+    @apply text-gray-600;
   }
 
-  .dark h2 {
-    @apply text-black
+  .light h1 {
+    @apply text-[#ff1d1d];
+  }
+
+  .light h2 {
+    @apply text-black;
+  }
+
+  .light p {
+    @apply text-gray-600;
+  }
+
+  .light button:not(.bg-\[#ff1d1d\]):not(#close-modal):not(#search-movie-submit):not(#previous-page):not(#next-page) {
+    @apply border-gray-300 hover:bg-gray-100;
+  }
+
+  .light .movie-card {
+    @apply bg-white border border-gray-200 shadow-md;
+  }
+
+  .light .movie-card h3 {
+    @apply text-black;
+  }
+
+  .light .movie-card p {
+    @apply text-gray-600;
+  }
+
+  .light .modal-content {
+    @apply bg-white text-black border border-gray-200;
+  }
+
+  .light .modal-content p {
+    @apply text-gray-700;
+  }
+
+  .light .modal-content strong {
+    @apply text-black;
   }
 }
