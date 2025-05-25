@@ -2,8 +2,9 @@ const moviesGrid = document.getElementById("movies-grid");
 const movieInput = document.getElementById("movie-input");
 const btnSearchMovie = document.getElementById("search-movie-submit");
 const pagination = document.getElementById("pagination");
-const toggleBtn = document.querySelector('#toggle-theme');
-const themeIcon = toggleBtn.querySelector('img');
+const toggleBtn = document.querySelector("#toggle-theme");
+const themeIcon = toggleBtn.querySelector("img");
+const dialogSelectedMovie = document.getElementById("selected-movie");
 let currentPage = 1;
 let lastSearch = "";
 
@@ -59,13 +60,24 @@ async function fetchResults(term, page) {
     }
 };
 
+async function fetchMovieDetails(id) {
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${id}`);
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.error("Erro ao buscar filme selecionado:", error);
+        moviesGrid.innerHTML = `<p class='text-[#c4c4c4]'>Erro ao buscar filme selecionado. Tente novamente.</p>`;
+    }
+}
+
 function renderResults(movies) {
     moviesGrid.innerHTML = "";
     movies.forEach((movie) => {
-        const card = document.createElement("div");
-        card.className = "bg-[#1c1917] text-white p-3 rounded-md flex flex-col items-center gap-2";
+        const card = document.createElement("button");
+        card.className = "bg-[#1c1917] text-white p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer";
 
-        const poster = movie.Poster !== "N/A" ? movie.Poster : "assets/fallback.jpg";
+        const poster = movie.Poster;
 
         card.innerHTML = `
       <img src="${poster}" alt="${movie.Title}" class="w-full h-[300px] object-fit rounded">
@@ -74,7 +86,38 @@ function renderResults(movies) {
     `;
 
         moviesGrid.appendChild(card);
+
+        card.addEventListener('click', async () => {
+            const selectedMovie = movie.imdbID;
+            const data = await fetchMovieDetails(selectedMovie);
+
+            dialogSelectedMovie.classList.remove("hidden");
+            dialogSelectedMovie.innerHTML = `
+  <div class="bg-[#1c1917] text-white p-6 rounded-xl shadow-xl max-w-lg w-full">
+    <img src="${data.Poster}" alt="${data.Title}" class="rounded max-h-[400px] object-cover mx-auto mb-4">
+    <h2 class="text-2xl font-bold mb-2">${data.Title}</h2>
+    <p class="mb-1"><strong>Ano:</strong> ${data.Year}</p>
+    <p class="mb-1"><strong>Duração:</strong> ${data.Runtime}</p>
+    <p class="mb-1"><strong>Lançamento:</strong> ${data.Released}</p>
+    <p class="mb-1"><strong>Classificação:</strong> ${data.Rated}</p>
+    <p class="mb-4"><strong>Sinopse:</strong> ${data.Plot}</p>
+    <button id="close-modal" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded self-end block ml-auto">
+      Fechar
+    </button>
+  </div>
+`;
+            dialogSelectedMovie.addEventListener("click", e => {
+                if (e.target === dialogSelectedMovie) {
+                    dialogSelectedMovie.classList.add("hidden")
+                }
+            })
+
+            document.getElementById("close-modal").addEventListener("click", () => {
+                dialogSelectedMovie.classList.add("hidden");
+            });
+        });
     })
+
 }
 
 function initPagination(total) {
@@ -82,7 +125,7 @@ function initPagination(total) {
 
     pagination.innerHTML = `
     <button id="previous-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Anterior</button>
-    <span class="bg-[#ff1d1d] w-24 h-[50px] rounded-md flex items-center justify-center !text-white font-medium">Página ${currentPage}</span>
+    <span class="bg-[#ff1d1d] w-fit p-3 gap-2 h-[50px] rounded-md flex items-center justify-center !text-white font-medium">Página ${currentPage} de ${totalPages}</span>
     <button id="next-page" class="bg-[#ff1d1d] w-28 h-[50px] rounded-md flex items-center justify-center text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">Próxima</button>
   `;
 
