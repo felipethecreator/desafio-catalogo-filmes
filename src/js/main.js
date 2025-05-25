@@ -25,7 +25,6 @@ function applyTheme(theme) {
     }
 }
 
-// Apply saved theme on load
 applyTheme(savedTheme);
 
 toggleBtn.addEventListener('click', () => {
@@ -35,13 +34,11 @@ toggleBtn.addEventListener('click', () => {
     localStorage.setItem('theme', newTheme);
 });
 
-// Function to open modal with blur effect
 function openModal() {
     dialogSelectedMovie.classList.remove("hidden");
     document.body.classList.add("modal-open");
 }
 
-// Function to close modal and remove blur effect
 function closeModal() {
     dialogSelectedMovie.classList.add("hidden");
     document.body.classList.remove("modal-open");
@@ -107,7 +104,6 @@ function renderResults(movies) {
     movies.forEach((movie) => {
         const card = document.createElement("button");
         
-        // Theme-aware card styling
         const cardClasses = isLight 
             ? "movie-card bg-white border border-gray-200 shadow-md text-black p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer hover:shadow-lg transition-all duration-200"
             : "movie-card bg-[#1c1917] text-white p-3 rounded-md flex flex-col items-center gap-2 cursor-pointer hover:bg-[#292524] transition-all duration-200";
@@ -132,7 +128,6 @@ function renderResults(movies) {
 
             openModal();
             
-            // Theme-aware modal styling
             const modalBg = isLight ? 'bg-white' : 'bg-[#1c1917]';
             const modalText = isLight ? 'text-black' : 'text-white';
             const modalBorder = isLight ? 'border border-gray-200 shadow-xl' : 'border border-[#27272a]';
@@ -156,14 +151,12 @@ function renderResults(movies) {
                 </div>
             `;
 
-            // Close modal when clicking outside
             dialogSelectedMovie.addEventListener("click", (e) => {
                 if (e.target === dialogSelectedMovie) {
                     closeModal();
                 }
             });
 
-            // Close modal when clicking the close button
             document.getElementById("close-modal").addEventListener("click", () => {
                 closeModal();
             });
