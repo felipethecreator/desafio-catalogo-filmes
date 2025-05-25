@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="">
 
 <head>
     <meta charset="UTF-8">
@@ -9,26 +9,26 @@
     <title>MovieFlix</title>
 </head>
 
-<body>
+<body class="bg-[#0C0A09]">
     <header class="h-30 flex items-center justify-between p-16">
         <h1 class="text-3xl md:text-4xl font-bold text-[#ff1d1d]">MovieFlix</h1>
-        <button class="w-10 border border-[#27272a] rounded-md p-2 hover:bg-[#292524] transition-colors duration-200 cursor-pointer">
-            <img src="assets/moon.png" alt="Dark mode" class="w-full">
+        <button id="toggle-theme" class="w-10 border border-[#27272a] rounded-md p-2 hover:bg-[#292524] transition-colors duration-200 cursor-pointer">
+            <img src="" alt="Dark mode" class="w-full">
         </button>
     </header>
 
     <main class="flex-1">
         <section class="h-auto flex justify-center p-6">
-            <input type="text" placeholder="Procure por filmes, séries, episódios..."
+            <input id="movie-input" type="text" placeholder="Procure por filmes, séries, episódios..."
                 class="text-[#f2f2f2] border-[0.5px] border-[#27272a] rounded-l-md cursor-pointer w-[60%] h-[50px] p-6">
-            <button class="bg-[#ff1d1d] w-28 gap-0.5 h-[50px] rounded-r-lg flex items-center pl-2 text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">
+            <button id="search-movie-submit" class="bg-[#ff1d1d] w-28 gap-0.5 h-[50px] rounded-r-lg flex items-center pl-2 text-white hover:bg-[#b91c1c] transition-colors duration-200 cursor-pointer">
                 <img src="assets/lupa.png" alt="Lupa" class="h-5 w-5 mr-2">
                 Procurar
             </button>
         </section>
 
-        <section class="text-center p-20 flex justify-center flex-col">
-            <h1 class="text-3xl font-bold mb-4 text-white">Bem vindo ao MovieFlix</h1>
+        <section class="text-center flex justify-center flex-col">
+            <h2 class="text-3xl font-bold mb-4 text-white">Bem vindo ao MovieFlix</h2>
             <span class="text-xl mb-6 text-[#c4c4c4]">Procure seus filmes favoritos, programas de TV e muito mais</span>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto text-lg text-white">
                 <button class="card">Ação</button>
@@ -37,10 +37,14 @@
                 <button class="card">Ficção Científica</button>
             </div>
         </section>
+
+        <section id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto p-6"></section>
+        <div id="pagination" class="flex justify-center gap-4 mt-8"></div>
     </main>
 
     <footer class="text-center text-md text-[#c4c4c4] p-4">
         <p>Desenvolvido pelo Felipe para CEVICOM</p>
     </footer>
 </body>
+<script src="js/main.js"></script>
 </html>
