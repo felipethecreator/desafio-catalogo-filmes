@@ -9,9 +9,18 @@ body {
   min-width: screen;
 }
 
+
 @layer utilities {
   .card {
     @apply w-50 h-30 flex items-center justify-center rounded-xl bg-[#1c1917]
-           hover:bg-[#292524] transition-colors duration-200 cursor-pointer;
+           hover:bg-[#292524] transition-colors duration-200 cursor-pointer text-white;
+  }
+
+  .dark body {
+    @apply bg-white text-black;
+  }
+
+  .dark .card {
+    @apply bg-gray-100 text-black hover:bg-gray-200;
   }
 }
