@@ -59,3 +59,5 @@ Abra o arquivo:
 src/index.html
 ```
 Recomendo usar a extensão Live Server do VS Code pra facilitar o reload automático.
+
+### Obs: Todo o JavaScript foi consolidado em um único arquivo (main.js) para facilitar execução direta em qualquer ambiente, sem necessidade de servidor local.
